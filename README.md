@@ -8,9 +8,9 @@ thiliapr/cli_music_explorer 是自由软件，遵循 [Affero GNU 通用公共许
 
 ## 编写原因
 我当时使用网易云，但是它很慢很卡很难受，我的小电脑在哭泣，说它羸弱的身躯扛不住网易云的冲击。  
-后来我就用 [FFmpeg](https://ffmpeg.org/) 中的 [FFplay](https://ffmpeg.org/ffplay.html) 去了。我设置它为音频的默认打开方式，然后用的非常舒畅。
-但是后来我想播放一个文件夹里的音乐，我想每次我都 `for file in pathlib.Path.cwd().rglob(".flac"): os.system(f"ffplay -autoexit -nodisp {file}")` 未免太麻烦了，所以写了这个东西。
-后来我想添加跳转功能，并且想要过滤掉难听的 MIDI 音乐（因为 FFplay 半吊子支持 MIDI——能播，但是很难听。还不如不支持呢）。
+后来我就用 [FFmpeg](https://ffmpeg.org/) 中的 [FFplay](https://ffmpeg.org/ffplay.html) 去了。我设置它为音频的默认打开方式，然后用的非常舒畅。  
+但是后来我想播放一个文件夹里的音乐，我想每次我都 `for file in pathlib.Path.cwd().rglob(".flac"): os.system(f"ffplay -autoexit -nodisp {file}")` 未免太麻烦了，所以写了这个东西。  
+后来我想添加跳转功能，并且想要过滤掉难听的 MIDI 音乐（因为 FFplay 半吊子支持 MIDI——能播，但是很难听。还不如不支持呢）。  
 我想，把他们统一框架比较好，所以就有了过滤器。
 
 ## 主要功能
