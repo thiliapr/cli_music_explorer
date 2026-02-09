@@ -6,21 +6,11 @@
 
 thiliapr/cli_music_explorer 是自由软件，遵循 [Affero GNU 通用公共许可证第 3 版或任何后续版本](https://www.gnu.org/licenses/agpl-3.0.html)。你可以自由地使用、修改和分发。
 
-## 编写原因
-我当时使用网易云，但是它很慢很卡很难受，我的小电脑在哭泣，说它羸弱的身躯扛不住网易云的冲击。  
-后来我就用 [FFmpeg](https://ffmpeg.org/) 中的 [FFplay](https://ffmpeg.org/ffplay.html) 去了。我设置它为音频的默认打开方式，然后用的非常舒畅。  
-但是后来我想播放一个文件夹里的音乐，我想每次我都 `for file in pathlib.Path.cwd().rglob(".flac"): os.system(f"ffplay -autoexit -nodisp {file}")` 未免太麻烦了，所以写了这个东西。  
-后来我想添加跳转功能，并且想要过滤掉难听的 MIDI 音乐（因为 FFplay 半吊子支持 MIDI——能播，但是很难听。还不如不支持呢）。  
-我想，把他们统一框架比较好，所以就有了过滤器。
-
-## 主要功能
-- **后台播放**: 在命令行播放音乐，不占用前台
-  - 如果您想要一些更复杂的功能（例如播放列表、GUI 界面等），建议使用其他音乐播放器软件
-  - 插句话，如果想要友善的用户体验和 GUI，我推荐使用自由软件 [DeaDBeeF](https://deadbeef.sourceforge.io/)
-- **智能过滤**: 支持后缀、前缀、子字符串、路径四种过滤器，可以组合使用
-- **交互式控制**: 播放过程中随时输入过滤器跳歌
-- **跨平台**: Windows、Linux、macOS 都能用，只要你有 ffplay
-- **深度优先遍历**: 按文件夹深度播放，不会乱跳
+## 这个工具有什么用
+- 它可以让你利用 FFplay 对音频格式的支持在后台播放音频
+- 它的前端非常简陋，就是一个命令行窗口，指望 GUI 的可以走了，去隔壁自由软件 [DeaDBeeF](https://deadbeef.sourceforge.io/) 吧
+- 运行时，你可以通过在命令行窗口键入短暂过滤器并回车，来应用你指定的过滤器，并在达到条件后自动清除，实现音乐跳转
+- 如果你什么都不做，那么工具将自动播放下一首音乐
 
 ## 快速开始
 ### 你需要什么
@@ -34,8 +24,7 @@ git clone https://github.com/thiliapr/cli_music_explorer.git
 cd cli_music_explorer
 ```
 
-### 基本使用
-#### 启动
+### 启动
 ```bash
 # 启动播放器，默认播放当前文件夹的音乐
 cd "~/Music/2020.03.22 眠りのピアノ 花 [例大祭17]"
@@ -47,11 +36,26 @@ python player.py -r "~/Music/WindAge"
 python player.py -f "Substring:natsuiro_matsuri"
 ```
 
-#### 退出程序
-Ctrl+C
+### 其他
+- 如何退出: Ctrl+C
+- 我想播放下一首歌曲: 回车
+- 我想跳转到指定的歌曲: 输入过滤器并回车。通过这样，应用该过滤器作为短暂过滤器，直到找到第一个符合条件的文件为止
 
-#### 应用临时过滤器
-输入过滤器并回车，则应用该过滤器作为短暂过滤器，直到找到第一个符合条件的文件为止
+## 工作流程
+```mermaid
+graph LR
+ProgranBegin(程序启动) --> 解析参数并获取全局过滤器 --> 获取目录文件树并排序 --> 开始遍历所有文件 --> NextFile[从文件树获取下一个文件] --> StopIteration{是否遍历完了}
+StopIteration --遍历完所有文件了--> 清除短暂过滤器 --> 重新开始遍历 --> NextFile
+StopIteration --没遍历完--> GlobalFilter{检查是否符合所有全局过滤器}
+GlobalFilter --不符合--> 跳过这个文件 --> NextFile 
+GlobalFilter --符合--> TempFilter{检查是否符合短暂过滤器}
+TempFilter --不符合--> 跳过这个文件 --> NextFile
+TempFilter --符合--> 清除短暂过滤器 --> 播放这个文件 --> WaitUserEnter{等待用户输入并回车}
+WaitUserEnter --直到播放完成都没有回车--> 文件播放完毕了 --> NextFile
+WaitUserEnter --文件正在播放时回车了--> 立即停止当前播放 --> UserInput{用户输入了什么}
+UserInput --输入了空行--> NextFile
+UserInput --输入了任意字符串--> 设置短暂过滤器为用户输入 --> NextFile
+```
 
 ## 过滤器
 ### 温馨提醒
