@@ -45,12 +45,12 @@ python player.py -f "Substring:natsuiro_matsuri"
 ```mermaid
 graph LR
 ProgranBegin(程序启动) --> 解析参数并获取全局过滤器 --> 获取目录文件树并排序 --> 开始遍历所有文件 --> NextFile[从文件树获取下一个文件] --> StopIteration{是否遍历完了}
-StopIteration --遍历完所有文件了--> 清除短暂过滤器 --> 重新开始遍历 --> NextFile
+StopIteration --遍历完所有文件了--> ClearTempFilter1[清除短暂过滤器] --> 重新开始遍历 --> NextFile
 StopIteration --没遍历完--> GlobalFilter{检查是否符合所有全局过滤器}
 GlobalFilter --不符合--> 跳过这个文件 --> NextFile 
 GlobalFilter --符合--> TempFilter{检查是否符合短暂过滤器}
 TempFilter --不符合--> 跳过这个文件 --> NextFile
-TempFilter --符合--> 清除短暂过滤器 --> 播放这个文件 --> WaitUserEnter{等待用户输入并回车}
+TempFilter --符合--> ClearTempFilter2[清除短暂过滤器] --> 播放这个文件 --> WaitUserEnter{等待用户输入并回车}
 WaitUserEnter --直到播放完成都没有回车--> 文件播放完毕了 --> NextFile
 WaitUserEnter --文件正在播放时回车了--> 立即停止当前播放 --> UserInput{用户输入了什么}
 UserInput --输入了空行--> NextFile
