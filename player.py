@@ -19,8 +19,8 @@ FILTER_ARG_TYPES = {
     "bool": lambda x: x.lower() == "true"  # 防止 bool("false") 返回 True
 }
 FILTERS = {
-    "Suffix": lambda file, *suffixies, reverse=False: reverse ^ (file.suffix.lower() in suffixies),
-    "Prefix": lambda file, *prefixies, reverse=False: reverse ^ any(file.name.startswith(prefix) for prefix in prefixies),
+    "Suffix": lambda file, *suffixes, reverse=False: reverse ^ (file.suffix.lower() in suffixes),
+    "Prefix": lambda file, *prefixes, reverse=False: reverse ^ any(file.name.startswith(prefix) for prefix in prefixes),
     "Substring": lambda file, *substrings, reverse=False: reverse ^ any(substring in file.name for substring in substrings),
     "Path": lambda file, *paths, reverse=False: reverse ^ any(file.as_posix().startswith(path) for path in paths),
 }
